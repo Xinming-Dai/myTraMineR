@@ -30,14 +30,12 @@ head(seqdistance_reordered)
 seqcluster <- function(seqdistance, h, cmethod){
   cluster_object <- hclust(as.dist(seqdistance), method=cmethod)
   cluster_cut <- cutree(cluster_object, h = h)
-  # reorder clusters for plot according to cluster sizes
-  clusters <- 
-    tibble(data=as.numeric(names(cluster_cut)),
-           cluster=cluster_cut) %>%
-    group_by(cluster) %>% 
-    mutate(cluster_size=n()) %>% 
-    ungroup() %>%
-    arrange(desc(cluster_size), desc(cluster))
+  clusters <- data.frame(data=as.numeric(names(cluster_cut)),
+                         cluster=cluster_cut)
+  clusters <- clusters[order(clusters$cluster),]
+  Freq <- as.data.frame(table(clusters$cluster))
+  clusters["Freq"] <- rep(Freq$Freq, Freq$Freq)
+  clusters <- clusters[order(clusters$Freq, decreasing=T),]
   return(clusters)
 }
 
@@ -58,17 +56,18 @@ sum(frequency[1:20])
 # 1. replace all elements with their medoids; build a new dataframe, use rep-->frequency; make a plot use seqfplot
 # use seqtab
 # improvement, if I can change the seqtab data directly. then, I can plot it directly.
-seqrep.replace <- function(data, clusters, var=NULL, alphabet, idxs, ...){
+# users may also want to give stslist data instead of a dataframe, so I can write a generic function for both classes
+seqrep_replace <- function(data, clusters, var=NULL, alphabet, idxs, ...){
   # replace the first a few largest sequence clusters with their representatives
   # return a state sequence object
   seqdata <- seqdef(data, var=var, alphabet=alphabet, ...)
-  cluster.idx <- unique(clusters[,c("cluster", "cluster_size")])
+  cluster.idx <- unique(clusters[,c("cluster", "Freq")])
   idxs <- idxs[idxs <= nrow(cluster.idx)]
   cluster.idx <- cluster.idx[idxs,]
   
   for(i in idxs){
     condition <- cluster.idx[i,]
-    seq.idx <- clusters[clusters$cluster == condition$cluster & clusters$cluster_size == condition$cluster_size ,]$data
+    seq.idx <- clusters[clusters$cluster == condition$cluster & clusters$Freq == condition$Freq ,]$data
     fseq <- seqtab(seqdata[seq.idx,])[1,]
     data[seq.idx, var] <- fseq # replace the original dataframe with the most frequent sequences
   }
@@ -81,7 +80,7 @@ idxs <- 1:20
 var <- 17:86
 alphabet <- c("employment", "FE", "HE", "joblessness", "school", "training")
 
-mvad.new.seq <- seqrep.replace(data, clusters, var, alphabet, idxs, xtsetp=6)
+mvad.new.seq <- seqrep_replace(data, clusters, var, alphabet, idxs, xtsetp=6)
 seqfplot(mvad.new.seq, idxs=1:20)
 
 # 2. If you want to make a plot for original data, I want to use seqiplot, just make a plot on the sorted dataframe according to cluster size. use sortv in seqiplot
