@@ -41,7 +41,7 @@ We cut the hierarchical tree to enforce the maximal distance within clusters to 
 
 If significant improvement on the frequency is observed, then the new `stslist` object, `mvad.new.seq`, should be considered in the later analysis.
 
-Use `help()` to check the usage of two functions—`seqcluster()` and `seqrep_replace()` that we created.
+Use `help()` to check the usage of two functions—`seqcluster()` and `seqrep_replace()` that we created in `myTraMineR` package.
 
 ![seqcluster](seqcluster_help.png)
 ![seqrep_replace](seqrep_replace_help.png)
