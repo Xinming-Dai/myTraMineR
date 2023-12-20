@@ -1,5 +1,5 @@
 ---
-title: "Demo myTraMineR functions"
+title: "The Demonstration of myTraMineR functions"
 author: "Xinming_Dai"
 date: '2023-12-14'
 output: pdf_document
@@ -18,12 +18,14 @@ mvad.seq <- seqdef(mvad, 17:86, xtstep = 6, alphabet = mvad.alphab)
 seqfplot(mvad.seq, idxs = 1:20)
 ```
 
-Figure 1 shows that the first 20 most frequent sequences represent 27.1% of the total. Now, let's consider a situation: if a sequence differs by only one state from the most common sequence, which consists solely of the "employment" state, this sequence won't be shown in the plot. The difference may be caused by noise, so we are interested in plotting this sequence in the frequency plot as well. In other words, we would like to replace sequences with their representatives and then draw a frequency plot.
+Figure 1 shows that the first 20 most frequent sequences represent 27.1% of the total. Now, let's consider a situation: if a sequence differs by only one state from the most common sequence, which consists solely of the "employment" state, this sequence won't be shown in the plot. The difference may be caused by repeating error—noise, so we are interested in plotting this sequence in the frequency plot as well. In other words, we would like to replace sequences with their representatives and then draw a frequency plot.
+
+Note that it will be important to examine whether small differences among sequences are true or not in the exploratory data analysis process. If users observe a significant improvement in frequency when considering small differences as not true, then in the later analysis, users should consider using the new dataset obtained by replacing these sequences with their representatives.
 
 # Function 1:  The Extension of `seqfplot()` 
 Figure 2 shows that if we consider two sequences different by one Hamming distance as the same, the first 20 most frequent sequences represent 31.6% of the total. This number increased by 16.6% compared to Figure 1.
 
-```{r e_seqfplot, fig.cap="We clustered the first 20 most frequent sequences, found the representative for each cluster, used these representatives to replace every element in the clusters, and then made a frequency plot.", results='hide', message=FALSE}
+```{r e_seqfplot, fig.cap="Frequency plot for mvad.new.seq dataset.", results='hide', message=FALSE}
 seqdistance <- seqdist(mvad.seq, method="HAM")
 clusters <- seqcluster(seqdistance, h=1.5, cmethod='complete')
 alphabet <- c("employment", "FE", "HE", "joblessness", "school", "training")
@@ -31,11 +33,15 @@ mvad.new.seq <- seqrep_replace(mvad, clusters, var=17:86, alphabet, idxs=1:20, x
 seqfplot(mvad.new.seq, idxs=1:20)
 ```
 
+We cut the hierarchical tree to enforce the maximal distance within clusters to separate the 20 most frequent sequences. Next, we identified the representative—specifically, the mode—for each cluster and used these representatives to replace every element in the clusters. This new dataset, named `mvad.new.seq`, is also a `stslist` object. Finally, we generated a frequency plot for `mvad.new.seq`.
+
 1. `seqdist()` is used to calculate distance matrix using Hamming distance. This is already in `TraMineR`. 
 2. `seqcluster()` uses complete linkage clustering and returns a data frame containing cluster information. There are three columns in the returned data frame—index, cluster, and Freq. It shows which cluster a data point belongs to and the cluster size.
 3. `seqrep_replace()` is similar as `seqdef()`. It returns a `stslist` object but with elements replaced by their cluster representatives.
 
-Use `help()` to check the usage of these two functions.
+If significant improvement on the frequency is observed, then the new `stslist` object, `mvad.new.seq`, should be considered in the later analysis.
+
+Use `help()` to check the usage of two functions—`seqcluster()` and `seqrep_replace()` that we created.
 
 ![seqcluster](seqcluster_help.png)
 ![seqrep_replace](seqrep_replace_help.png)
