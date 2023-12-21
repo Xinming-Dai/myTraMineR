@@ -4,7 +4,7 @@
 #'
 #' @param seqdistance A distance matrix or a distance array returned by TraMineR::seqdist() function.
 #' @param h Numeric scalar or vector with heights where the tree should be cut. The default is 1.5.
-#' @param cmethod The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC). The default clustering method is "complete", complete-linkage clustering.
+#' @param cmethod This argument will be passed to `hclust()`. It takes the same values as `method` argument in `hclust()`. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC). The default clustering method is "complete", complete-linkage clustering.
 #'
 #' @return `seqcluster` returns a data frame with three columns—the index of original data, group memberships, and group size.
 #' @export

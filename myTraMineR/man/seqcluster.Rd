@@ -11,7 +11,7 @@ seqcluster(seqdistance, h = 1.5, cmethod = "complete")
 
 \item{h}{Numeric scalar or vector with heights where the tree should be cut. The default is 1.5.}
 
-\item{cmethod}{The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC). The default clustering method is "complete", complete-linkage clustering.}
+\item{cmethod}{This argument will be passed to \code{hclust()}. It takes the same values as \code{method} argument in \code{hclust()}. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC). The default clustering method is "complete", complete-linkage clustering.}
 }
 \value{
 \code{seqcluster} returns a data frame with three columns—the index of original data, group memberships, and group size.
