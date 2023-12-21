@@ -19,7 +19,7 @@ getheight(seqdistance, cmethod = "complete", idxs = 1:10, fq)
 The cut height—a numeric number and the frequency, meaning how much these clusters will represent for the total.
 }
 \description{
-This function returns a cut height, denoted as \code{h}, on a dendrogram using a specified clustering method (\code{cmethod}). If the dataset is clustered based on \code{h}, the first few most frequent groups, specified by \code{idxs}, will yield at least \code{fq}\% of the total sequences.
+This function returns a cut height, denoted as \code{h}, on a dendrogram using a specified clustering method (\code{cmethod}). If the dataset is clustered based on \code{h}, the first few most frequent groups, specified by \code{idxs}, will yield at least \code{fq} of the total sequences.
 }
 \examples{
 getheight(seqdistance, fq=0.3)

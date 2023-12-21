@@ -1,6 +1,6 @@
 #' Get the cut height for cutting a hierarchical clustering tree
 #'
-#' This function returns a cut height, denoted as `h`, on a dendrogram using a specified clustering method (`cmethod`). If the dataset is clustered based on `h`, the first few most frequent groups, specified by `idxs`, will yield at least `fq`% of the total sequences.
+#' This function returns a cut height, denoted as `h`, on a dendrogram using a specified clustering method (`cmethod`). If the dataset is clustered based on `h`, the first few most frequent groups, specified by `idxs`, will yield at least `fq` of the total sequences.
 #'
 #' @param seqdistance A distance matrix or a distance array returned by TraMineR::seqdist() function.
 #' @param cmethod This argument will be passed to `hclust()`. It takes the same values as `method` argument in `hclust()`. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC). The default clustering method is "complete", complete-linkage clustering.
