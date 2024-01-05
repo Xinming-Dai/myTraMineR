@@ -1,6 +1,6 @@
 ---
 title: "The Demonstration of myTraMineR functions"
-author: "Xinming_Dai"
+author: "Xinming Mia Dai"
 date: '2023-12-14'
 output: pdf_document
 ---
@@ -18,33 +18,47 @@ mvad.seq <- seqdef(mvad, 17:86, xtstep = 6, alphabet = mvad.alphab)
 seqfplot(mvad.seq, idxs = 1:20)
 ```
 
-Figure 1 shows that the first 20 most frequent sequences represent 27.1% of the total. Now, let's consider a situation: if a sequence differs by only one state from the most common sequence, which consists solely of the "employment" state, this sequence won't be shown in the plot. The difference may be caused by repeating error—noise, so we are interested in plotting this sequence in the frequency plot as well. In other words, we would like to replace sequences with their representatives and then draw a frequency plot.
+Figure 1 shows that the first 20 most frequent sequences represent 27.1% of the total. Now, let's consider a situation: if a sequence differs by only one state from the most common sequence, which consists solely of the "employment" state, this sequence won't be shown in the plot. Several cases are shown in figure 2. The difference may be caused by repeating error—noise, so we are interested in plotting this sequence in the frequency plot as well. In other words, we would like to replace sequences with their representatives and then draw a frequency plot.
 
 Note that it will be important to examine whether small differences among sequences are true or not in the exploratory data analysis process. If users observe a significant improvement in frequency when considering small differences as not true, then in the later analysis, users should consider using the new dataset obtained by replacing these sequences with their representatives.
 
-# Function 1:  The Extension of `seqfplot()` 
-Figure 2 shows that if we consider two sequences different by one Hamming distance as the same, the first 20 most frequent sequences represent 31.6% of the total. This number increased by 16.6% compared to Figure 1.
+```{r illustration, echo=FALSE, message=FALSE, fig.cap="In case 1, the first sequence only differs from the most frequent sequence by one state. \n In case 2, the sequence, which consists solely of the \"employment\" state, is still most frequent, and the first two sequences differ from it by one state. \n In case 3, the first sequence only differs from the most frequent sequence by two states."}
 
-```{r e_seqfplot, fig.cap="Frequency plot for mvad.new.seq dataset.", results='hide', message=FALSE}
+eg <-rep("employment", 7)
+egs <- matrix(rep(eg, 10), ncol=7, byrow=T)
+case1 <- eg; case1[7] <- "FE"
+case2 <- eg; case2[7] <- "HE"
+case3 <- eg; case3[c(6, 7)] <- c("FE", "HE")
+illustration <- rbind(case1, egs, case1, case2, egs[1:9,], case3, egs)
+illustration.alphab <- c("employment", "FE", "HE")
+illustration <- seqdef(illustration, 1:7, alphabet = illustration.alphab)
+groups <- factor(rep(c(1,2,3), each=11), labels=paste("Case", 1:3))
+seqiplot(illustration, group = groups)
+```
+
+# Function 1:  The Extension of `seqfplot()` 
+Figure 3 shows that if we consider two sequences different by one Hamming distance as the same, the first 20 most frequent sequences represent 31.6% of the total. This number increased by 16.6% compared to Figure 1.
+
+```{r e_seqfplot, fig.cap="Frequency plot for mvad.replaced dataset.", results='hide', message=FALSE}
 seqdistance <- seqdist(mvad.seq, method="HAM")
 clusters <- seqcluster(seqdistance, h=1.5, cmethod='complete')
 alphabet <- c("employment", "FE", "HE", "joblessness", "school", "training")
-mvad.new.seq <- seqrep_replace(mvad, clusters, var=17:86, alphabet, idxs=1:20, xtsetp=6)
-seqfplot(mvad.new.seq, idxs=1:20)
+mvad.replaced <- seqrep_replace(mvad, clusters, var=17:86, alphabet, idxs=1:20, xtsetp=6)
+seqfplot(mvad.replaced, idxs=1:20)
 ```
 
-We cut the hierarchical tree to enforce the maximal distance within clusters to separate the 20 most frequent sequences. Next, we identified the representative—specifically, the mode—for each cluster and used these representatives to replace every element in the clusters. This new dataset, named `mvad.new.seq`, is also a `stslist` object. Finally, we generated a frequency plot for `mvad.new.seq`.
+We cut the hierarchical tree to enforce the maximal distance within clusters to separate the 20 most frequent sequences. Next, we identified the representative—specifically, the mode—for each cluster and used these representatives to replace every element in the clusters. This new dataset, named `mvad.replaced`, is also a `stslist` object. Finally, we generated a frequency plot for `mvad.replaced`.
 
-1. `seqdist()` is used to calculate distance matrix using Hamming distance. This is already in `TraMineR`. 
-2. `seqcluster()` uses complete linkage clustering and returns a data frame containing cluster information. There are three columns in the returned data frame—index, cluster, and Freq. It shows which cluster a data point belongs to and the cluster size.
+1. `seqdist()` is used to calculate distance matrix using Hamming distance. This is already in `TraMineR`. Users can switch to other distance measurements here.
+2. `seqcluster()` uses complete linkage clustering and returns a data frame containing cluster information. There are three columns in the returned data frame—index, cluster, and Freq. It shows which cluster a data point belongs to and the cluster size. Users have the flexibility to switch to other agglomeration methods and specify heights where the dendrogram should be cut. For example, if a user chooses `h = 2.5`, then two sequences differing by two states will be considered the same, as illustrated in case 3 in Figure 3.
 3. `seqrep_replace()` is similar as `seqdef()`. It returns a `stslist` object but with elements replaced by their cluster representatives.
 
-If significant improvement on the frequency is observed, then the new `stslist` object, `mvad.new.seq`, should be considered in the later analysis.
+If significant improvement on the frequency is observed, then the new `stslist` object, `mvad.replaced`, should be considered in the later analysis.
 
 Use `help()` to check the usage of two functions—`seqcluster()` and `seqrep_replace()` that we created in `myTraMineR` package.
 
-![seqcluster](seqcluster_help.png)
-![seqrep_replace](seqrep_replace_help.png)
+![seqcluster](pics/seqcluster_help.png)
+![seqrep_replace](pics/seqrep_replace_help.png)
 
 
 # Function2: Get the cut height
@@ -55,4 +69,4 @@ Use `help()` to check the usage of two functions—`seqcluster()` and `seqrep_re
 getheight(seqdistance, fq=0.3)
 getheight(seqdistance, fq=0.3, idxs=1:100)
 ```
-![getheight](getheight.png)
+![getheight](pics/getheight.png)
